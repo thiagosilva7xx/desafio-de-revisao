@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desafio Relâmpago · Revisão de Matemática</title>
+<style>
+:root{
+  --bg1:#1d0b45; --bg2:#3f1784; --card:#2a1263; --card2:#371a7a; --line:#5b3aa8;
+  --txt:#f5f1ff; --mut:#c6b8ec; --acc:#ffb020; --acc2:#ffd166; --cyan:#4dd8e8;
+  --good:#3fd17a; --bad:#ff5b6b;
+  --t0:#e5484d; --t1:#2f6fde; --t2:#d99a00; --t3:#2e9e44;
+}
+*{box-sizing:border-box}
+html{background:var(--bg1);touch-action:manipulation}
+html,body{margin:0;min-height:100%}
+body{font-family:"Trebuchet MS","Ubuntu","DejaVu Sans",system-ui,sans-serif;color:var(--txt);min-height:100vh;
+  background:radial-gradient(700px 500px at 10% 0%,rgba(255,176,32,.14),transparent),radial-gradient(800px 600px at 100% 100%,rgba(77,216,232,.14),transparent),linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed}
+button,input,select{font-family:inherit}
+[hidden]{display:none !important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:rgba(15,5,40,.6);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-weight:900;font-size:1.15rem;letter-spacing:.5px}
+.brand span{color:var(--acc)}
+.ghostbtn{background:transparent;border:1px solid var(--line);color:var(--mut);padding:6px 12px;border-radius:999px;cursor:pointer;font-size:.85rem;white-space:nowrap}
+.ghostbtn:hover{border-color:var(--acc);color:var(--txt)}
+main{max-width:1080px;margin:0 auto;padding:18px 16px 40px}
+.screen{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(2rem,5vw,3.1rem);margin:.15em 0 .1em;line-height:1.1}
+h1 em{font-style:normal;color:var(--acc)}
+.lead{color:var(--mut);font-size:1.1rem;margin:0 0 16px}
+.panel{background:rgba(42,18,99,.9);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:.95rem;color:var(--mut);margin:12px 0 4px}
+input[type=text],select{width:100%;padding:12px 14px;font-size:1.12rem;border-radius:12px;border:2px solid var(--line);background:#160736;color:var(--txt)}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--acc)}
+.btn{background:linear-gradient(180deg,#ffd166,var(--acc));color:#2a1405;font-weight:800;font-size:1.2rem;border:none;border-radius:14px;padding:14px 26px;cursor:pointer;box-shadow:0 5px 0 #a3620a}
+.btn:active{transform:translateY(2px);box-shadow:0 3px 0 #a3620a}
+.btn.sec{background:var(--card2);color:var(--txt);box-shadow:0 4px 0 #12052e;border:1px solid var(--line)}
+.howto{margin:14px 0 0;padding-left:20px;color:var(--mut);line-height:1.6}
+.howto b{color:var(--txt)}
+h3{margin:0 0 8px;font-size:1.08rem;color:var(--acc2)}
+.note{font-size:.88rem;color:var(--mut)}
+.msgbad{color:var(--bad);min-height:1.2em;margin-top:8px;font-weight:700}
+
+/* ===== tela da questão ===== */
+.qtop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.qnum{background:rgba(255,255,255,.12);border-radius:999px;padding:6px 14px;font-weight:800}
+.qbar{flex:1;height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin:0 6px}
+.qbar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--acc));transition:width .3s}
+.ring{position:relative;width:64px;height:64px;flex:none}
+.ring svg{width:64px;height:64px;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:1.35rem}
+.ring.low b{color:var(--bad)}
+.qcard{background:#fff;color:#1d1b2e;border-radius:18px;padding:18px 22px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.qcard .cap{font-size:.8rem;color:#6b5aa8;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.qtxt{font-size:clamp(1.1rem,2.3vw,1.45rem);line-height:1.45}
+.qfig{margin-top:12px;text-align:center}
+.qfig svg.fig{width:100%;height:auto;font-family:"Liberation Serif","DejaVu Serif",serif;fill:#1d1b2e}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:640px){.tiles{grid-template-columns:1fr}}
+.tile{display:flex;align-items:center;gap:14px;border:none;border-radius:14px;padding:14px 16px;min-height:76px;color:#fff;font-size:clamp(1.1rem,2.3vw,1.4rem);font-weight:700;text-align:left;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.3);transition:transform .08s,filter .15s,opacity .2s}
+.tile:hover{filter:brightness(1.08)}
+.tile:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.tile .sh{flex:none;width:34px;height:34px}
+.tile.t0{background:var(--t0)} .tile.t1{background:var(--t1)} .tile.t2{background:var(--t2)} .tile.t3{background:var(--t3)}
+.tiles.done .tile{cursor:default;opacity:.35}
+.tiles.done .tile.pick{opacity:1;outline:4px solid #fff;outline-offset:2px}
+.tiles.done .tile.right{opacity:1}
+.tiles.done .tile.wrong{opacity:1;filter:grayscale(.4)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 .1em;font-size:.95em}
+.fr .n{border-bottom:2px solid currentColor;padding:0 .25em}
+.fr .d{padding:0 .25em}
+.overlay{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(20,6,50,.72);animation:fade .2s ease}
+.overlay .box{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px 30px;text-align:center;min-width:280px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.overlay .big{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:900}
+.overlay .big.ok{color:var(--good)} .overlay .big.no{color:var(--bad)} .overlay .big.neu{color:var(--acc2)}
+.overlay .sub{color:var(--mut);margin:6px 0 14px;font-size:1.05rem}
+
+/* ===== fim ===== */
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:14px 0 4px;min-height:190px}
+.pd{display:flex;flex-direction:column;align-items:center;width:31%;max-width:150px}
+.pd .who{font-weight:900;text-align:center;margin-bottom:6px;word-break:break-word;font-size:1rem}
+.pd .blk{width:100%;border-radius:12px 12px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:8px;font-weight:900;color:#2a1405}
+.pd .blk small{font-weight:700;font-size:.8rem;opacity:.85}
+.pd1 .blk{height:140px;background:linear-gradient(180deg,#ffe27a,#d99a00)}
+.pd2 .blk{height:105px;background:linear-gradient(180deg,#f2f5fa,#9aa6bd)}
+.pd3 .blk{height:80px;background:linear-gradient(180deg,#f3b47a,#a85a24)}
+.pd .medal{font-size:1.6rem}
+.score{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;color:var(--acc2);line-height:1}
+.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:30;pointer-events:none;animation:cair linear forwards}
+@keyframes cair{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* ===== ranking (mesmo sistema dos outros jogos) ===== */
+#onMode{display:none !important}
+ol.rank{margin:0;padding-left:26px}
+ol.rank li{padding:5px 0;border-bottom:1px solid rgba(43,70,131,.6);display:flex;justify-content:space-between;gap:10px}
+ol.rank li.me{color:var(--good);font-weight:700}
+/* nomes do pódio: dourado cintilante, prata e bronze */
+.nm{position:relative;display:inline-block;font-weight:900;background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 2.6s linear infinite}
+.nm1{background-image:linear-gradient(100deg,#a8740a 0%,#ffd34d 22%,#fffbe0 36%,#ffd34d 50%,#c98f12 70%,#ffe27a 85%,#a8740a 100%);filter:drop-shadow(0 0 6px rgba(255,200,60,.55))}
+.nm2{background-image:linear-gradient(100deg,#7d889e 0%,#dfe6f2 25%,#ffffff 38%,#c7d0e0 55%,#8f9bb3 75%,#e9eef7 90%,#7d889e 100%);filter:drop-shadow(0 0 4px rgba(220,230,255,.4))}
+.nm3{background-image:linear-gradient(100deg,#7a3f14 0%,#e39a5c 25%,#ffd2a8 38%,#d0803f 55%,#8a4b1f 75%,#f0b27a 90%,#7a3f14 100%);filter:drop-shadow(0 0 4px rgba(240,150,80,.35))}
+.nmp{background-image:linear-gradient(90deg,#ff6b7a,#ffd166,#5ce1a0,#4dd8e8,#a98bff,#ff6b7a);animation-duration:4s}
+@keyframes shine{from{background-position:200% 0}to{background-position:-50% 0}}
+/* brilhinhos do 1º lugar */
+.nm1:before,.nm1:after{content:"";position:absolute;width:10px;height:10px;background:#fffbe0;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 3px #ffd34d);animation:twinkle 1.8s ease-in-out infinite;pointer-events:none}
+.nm1:before{top:-6px;right:-9px}
+.nm1:after{bottom:-4px;left:-8px;width:7px;height:7px;animation-delay:.9s}
+@keyframes twinkle{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1.15) rotate(45deg);opacity:1}70%{transform:scale(.6) rotate(90deg);opacity:.7}}
+.nm4{color:#c9a8ff;font-weight:800;text-shadow:0 0 8px rgba(169,139,255,.65);animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{0%,100%{text-shadow:0 0 4px rgba(169,139,255,.35)}50%{text-shadow:0 0 12px rgba(169,139,255,.95)}}
+.nm5{color:#7fd8ff;font-weight:700}
+ol.rank .crown{width:18px;height:12px;vertical-align:1px;margin-right:4px;filter:drop-shadow(0 0 4px rgba(255,200,60,.7));animation:crownb 1.6s ease-in-out infinite}
+@keyframes crownb{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.nm,.nm1:before,.nm1:after,.nm4,ol.rank .crown{animation:none}}
+.tabs button[data-all]{border-color:#a98bff;color:#d6c8ff}
+.tabs button[data-all].on{background:linear-gradient(90deg,#a98bff,#ff9f43);border-color:transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+ol.rank .pts{font-variant-numeric:tabular-nums;white-space:nowrap}
+ol.rank .tg{color:var(--mut);font-size:.8em;margin-left:6px}
+.empty{color:var(--mut);font-size:.95rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{background:#160736;border:1px solid var(--line);color:var(--mut);padding:5px 12px;border-radius:999px;cursor:pointer;font-size:.85rem}
+.tabs button:hover{border-color:var(--cyan);color:var(--txt)}
+.tabs button.on{background:var(--cyan);border-color:var(--cyan);color:#06283a;font-weight:700}
+.rkbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#rkMsg{min-height:1.2em;margin-top:8px}
+#rkMsg.bad{color:var(--bad)} #rkMsg.good{color:var(--good)}
+table.cmp{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.cmp th{color:var(--mut);font-weight:400;font-size:.9rem;text-align:right;padding:4px 8px;border-bottom:1px solid var(--line)}
+table.cmp td{padding:8px;text-align:right;border-bottom:1px solid rgba(43,70,131,.6);font-size:1.05rem}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+table.cmp tr.lead td{color:var(--good);font-weight:700;font-size:1.15rem}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">⚡ Desafio <span>Relâmpago</span></div>
+  <div style="display:flex;gap:8px">
+    <button class="ghostbtn" id="musicBtn" type="button">Música: ligada</button>
+    <button class="ghostbtn" id="muteBtn" type="button">Som: ligado</button>
+  </div>
+</header>
+
+<main>
+  <!-- início -->
+  <section id="start" class="screen">
+    <h1>Desafio <em>Relâmpago</em></h1>
+    <p class="lead">Revisão de Matemática · 6º ano · Capítulos 10 a 13</p>
+    <div class="grid2">
+      <div class="panel">
+        <label for="inNome">Seu nome</label>
+        <input type="text" id="inNome" maxlength="32" autocomplete="off" placeholder="Ex.: Ana S.">
+        <div class="note" id="nomeHint" hidden>O nome aparece no ranking para toda a turma: use o primeiro nome e a inicial do sobrenome.</div>
+        <div id="turmaBox">
+          <label for="selTurma">Sua turma</label>
+          <select id="selTurma"><option value="">Escolha sua turma…</option></select>
+        </div>
+        <input type="hidden" id="inEquipe" value="">
+        <div class="msgbad" id="startMsg"></div>
+        <div style="margin-top:14px"><button class="btn" id="btnStart" type="button">Começar</button></div>
+        <ul class="howto" id="regras"></ul>
+      </div>
+      <div class="panel">
+        <h3>Ranking</h3>
+        <div class="tabs" id="rkMain" hidden></div>
+        <div id="onView" hidden>
+          <div class="tabs" id="onMode"></div>
+          <div class="tabs" id="onTurma"></div>
+          <div id="onList"></div>
+          <div class="note" id="onStatus"></div>
+        </div>
+        <div id="locView">
+          <div class="tabs" id="rkTabs"></div>
+          <div id="rankStart"></div>
+          <div class="rkbar">
+            <button class="ghostbtn" id="btnExp" type="button">Exportar ranking</button>
+            <button class="ghostbtn" id="btnImp" type="button">Importar ranking</button>
+            <input type="file" id="fileImp" accept=".json,application/json" multiple hidden>
+            <button class="ghostbtn" id="btnClear" type="button">Limpar ranking</button>
+            <button class="ghostbtn" id="btnDelBoard" type="button" hidden>Remover este placar</button>
+          </div>
+          <div class="note" id="rkMsg"></div>
+          <label for="inTurma">Nome da turma deste computador</label>
+          <input type="text" id="inTurma" maxlength="24" autocomplete="off" placeholder="Ex.: Turma 601">
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="cmpPanel" hidden style="margin-top:18px">
+      <h3>Placar das turmas</h3>
+      <table class="cmp"><thead><tr><th>Turma</th><th>Alunos</th><th>Melhor</th><th>Média</th></tr></thead><tbody id="cmpBody"></tbody></table>
+      <div class="note">Média = média da pontuação dos alunos de cada turma.</div>
+    </div>
+  </section>
+
+  <!-- questão -->
+  <section id="game" class="screen" hidden>
+    <div class="qtop">
+      <span class="qnum" id="qNum">Questão 1/35</span>
+      <div class="qbar"><i id="qBar" style="width:0"></i></div>
+      <span class="qnum" id="qPts" hidden>0 pts</span>
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="7"/><circle id="ringArc" cx="32" cy="32" r="27" fill="none" stroke="#ffb020" stroke-width="7" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="0"/></svg>
+        <b id="ringTxt">90</b>
+      </div>
+    </div>
+    <div class="qcard">
+      <div class="cap" id="qCap"></div>
+      <div class="qtxt" id="qTxt"></div>
+      <div class="qfig" id="qFig"></div>
+    </div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <!-- fim -->
+  <section id="end" class="screen" hidden>
+    <div class="grid2">
+      <div class="panel" style="text-align:center">
+        <h2 style="margin:4px 0 6px;color:var(--acc2)" id="eTitle">Prova concluída!</h2>
+        <div style="color:var(--mut)" id="eWho"></div>
+        <div class="score" id="eScore"></div>
+        <div style="font-size:1.25rem;margin:6px 0" id="eHits"></div>
+        <div class="note" id="eTime"></div>
+        <div class="note" id="sendStatus" style="margin-top:10px"></div>
+        <div style="margin-top:16px"><button class="btn sec" id="btnHome" type="button">Voltar ao início</button></div>
+      </div>
+      <div class="panel">
+        <h3 id="rankEndTitle">Ranking</h3>
+        <div class="podium" id="podium"></div>
+        <div class="note" id="ePos"></div>
+        <div id="rankEnd"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="ov" hidden>
+  <div class="box">
+    <div class="big" id="ovBig"></div>
+    <div class="sub" id="ovSub"></div>
+    <button class="btn" id="btnNext" type="button">Próxima</button>
+  </div>
+</div>
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO DO PROFESSOR
+   ===================================================================== */
+// Endereço do ranking online (termina em /exec). Deixe '' para usar só o ranking do computador.
+const API_URL = '';
+// Turmas que aparecem na lista do aluno.
+const TURMAS = ['Turma 601', 'Turma 602', 'Turma 603', 'Turma 604'];
+// Tempo para cada questão, em segundos.
+const TEMPO_POR_QUESTAO = 90;
+// false = modo prova: o aluno NÃO vê se acertou durante o jogo, só o total no fim.
+const MOSTRAR_ACERTO = false;
+// true = cada aluno recebe as questões (e as alternativas) em ordem diferente.
+const EMBARALHAR = true;
+// true = cada aluno (nome + turma) só pode fazer a prova uma vez neste aparelho.
+const UMA_TENTATIVA = true;
+/* ===================================================================== */
+(function(){
+'use strict';
+
+const $ = id => document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmt(x,maxDec){
+  if(maxDec===undefined) maxDec=3;
+  let s=(Math.round(x*Math.pow(10,maxDec))/Math.pow(10,maxDec)).toFixed(maxDec);
+  if(s.indexOf('.')>=0) s=s.replace(/0+$/,'').replace(/\.$/,'');
+  return s.replace('.',',').replace('-','−');
+}
+
+/* ---------- som ---------- */
+let muted=false, audioCtx=null;
+function getCtx(){ try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); return audioCtx; }catch(e){ return null; } }
+function beep(freq,dur,type,delay,vol){
+  if(muted) return;
+  try{ const c=getCtx(); if(!c) return; const o=c.createOscillator(), g=c.createGain();
+    o.type=type||'sine'; o.frequency.value=freq; o.connect(g); g.connect(c.destination);
+    const t=c.currentTime+(delay||0); g.gain.setValueAtTime(vol||0.07,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.start(t); o.stop(t+dur+0.02); }catch(e){}
+}
+const sfx={
+  pick(){ beep(660,.08,'triangle'); beep(880,.1,'triangle',.07); },
+  ok(){ beep(660,.12,'triangle'); beep(990,.18,'triangle',.11); },
+  no(){ beep(200,.3,'sawtooth',0,.05); },
+  tick(){ beep(1200,.05,'square',0,.03); },
+  start(){ [392,523,659,784].forEach((f,i)=>beep(f,.14,'triangle',i*.09)); },
+  fim(){ [523,659,784,1047].forEach((f,i)=>beep(f,.18,'triangle',i*.12)); }
+};
+/* música de fundo (gerada pelo navegador) */
+let musicOn=!/[?&#]mudo/.test(location.href), mTimer=null, mStep=0, mNext=0, mGain=null;
+const SEMI=n=>440*Math.pow(2,n/12);
+const ML=[[3,7,10,7,3,7,10,15],[1,5,8,5,1,5,8,13],[-2,2,5,2,-2,2,5,10],[0,3,7,3,0,3,8,12]];
+const MB=[-21,-23,-26,-24];
+function mTone(f,t,d,type,v){ const c=audioCtx, o=c.createOscillator(), g=c.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g); g.connect(mGain); o.start(t); o.stop(t+d+0.05); }
+function mStepFn(step,t){ const bar=Math.floor(step/8)%4, k=step%8; mTone(SEMI(ML[bar][k]),t,0.22,'triangle',0.04); if(k%4===0) mTone(SEMI(MB[bar]),t,0.5,'sine',0.09); if(k%2===1) mTone(SEMI(MB[bar]+19),t,0.08,'square',0.012); }
+function musicStart(){ if(!musicOn||mTimer) return; const c=getCtx(); if(!c) return;
+  try{ mGain=c.createGain(); mGain.gain.setValueAtTime(0.0001,c.currentTime); mGain.gain.exponentialRampToValueAtTime(0.7,c.currentTime+1); mGain.connect(c.destination);
+    mStep=0; mNext=c.currentTime+0.1;
+    mTimer=setInterval(()=>{ try{ while(mNext<c.currentTime+0.3){ mStepFn(mStep,mNext); mNext+=0.2; mStep++; } }catch(e){} },80);
+  }catch(e){ mTimer=null; } }
+function musicStop(){ if(!mTimer) return; clearInterval(mTimer); mTimer=null;
+  try{ const g=mGain, c=audioCtx; g.gain.cancelScheduledValues(c.currentTime); g.gain.setValueAtTime(Math.max(g.gain.value,0.0002),c.currentTime); g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+0.4); setTimeout(()=>{ try{ g.disconnect(); }catch(e){} },600); }catch(e){} }
+function confetes(){
+  const cores=['#e5484d','#2f6fde','#d99a00','#2e9e44','#ffd166','#4dd8e8'];
+  for(let i=0;i<70;i++){ const d=document.createElement('div'); d.className='conf'; d.style.left=rnd(0,100)+'vw'; d.style.background=pick(cores); d.style.animationDuration=(2+Math.random()*2).toFixed(2)+'s'; d.style.animationDelay=(Math.random()*.8).toFixed(2)+'s'; document.body.appendChild(d); setTimeout(()=>d.remove(),5000); }
+}
+
+/* =====================================================================
+   QUESTÕES (Revisão Simulado SAS · Capítulos 10 a 13)
+   ok = índice da alternativa certa (0 = a, 1 = b, 2 = c, 3 = d)
+   ===================================================================== */
+const fr=(n,d)=>'<span class="fr"><span class="n">'+n+'</span><span class="d">'+d+'</span></span>';
+const svgW=(vb,inner,mw)=>'<svg class="fig" viewBox="'+vb+'" style="max-width:'+Math.round((mw||420)*1.3)+'px" aria-hidden="true">'+inner+'</svg>';
+const T=(x,y,t,o)=>'<text x="'+x+'" y="'+y+'" '+(o||'')+'>'+t+'</text>';
+
+// --- figuras ---
+function figLousa(){ return svgW('0 0 320 150','<rect x="4" y="4" width="312" height="134" rx="8" fill="#2f5e4e" stroke="#5a6b78" stroke-width="6"/><rect x="40" y="138" width="240" height="8" fill="#5a6b78"/>'+
+  T(30,40,'(I)  18 + 7 = 24','fill="#fff" font-size="19"')+T(30,68,'(II)  30 : 5 = 7','fill="#fff" font-size="19"')+T(30,96,'(III)  25 = 100 : 4','fill="#fff" font-size="19"')+T(30,124,'(IV)  9 · 3 = 29','fill="#fff" font-size="19"'),320); }
+function figBalanca(){
+  const caixa=(x,t,cor)=>'<rect x="'+x+'" y="52" width="36" height="28" rx="3" fill="'+(cor||'#fdf2c8')+'" stroke="#333"/>'+T(x+18,72,t,'text-anchor="middle" font-size="15" font-weight="700"');
+  return svgW('0 0 380 190','<rect x="185" y="40" width="10" height="130" fill="#3d4a55"/><rect x="140" y="168" width="100" height="10" rx="3" fill="#3d4a55"/><rect x="50" y="36" width="280" height="6" rx="3" fill="#3d4a55"/><circle cx="190" cy="38" r="8" fill="#e8b23a"/>'+
+    '<path d="M70 42 L40 95 M70 42 L110 95 M310 42 L270 95 M310 42 L340 95" stroke="#777"/><ellipse cx="75" cy="98" rx="55" ry="10" fill="#d7e3ea" stroke="#555"/><ellipse cx="305" cy="98" rx="55" ry="10" fill="#d7e3ea" stroke="#555"/>'+
+    caixa(30,'36')+T(75,72,'+','text-anchor="middle" font-size="16"')+caixa(84,'14')+caixa(258,'30')+T(304,72,'+','text-anchor="middle" font-size="16"')+caixa(312,'?','#fdf2c8')); }
+function figGemeas(){ return svgW('0 0 300 110','<circle cx="40" cy="22" r="7" fill="#c7522a"/><rect x="33" y="31" width="14" height="18" rx="5" fill="#c7522a"/><circle cx="62" cy="22" r="7" fill="#1f7a72"/><rect x="55" y="31" width="14" height="18" rx="5" fill="#1f7a72"/>'+T(84,42,'hoje: juntas, 30 anos','font-size="15"')+
+  '<path d="M51 56 V74 M45 68 L51 76 L57 68" stroke="#333" stroke-width="2" fill="none"/><circle cx="40" cy="84" r="7" fill="#c7522a"/><rect x="33" y="93" width="14" height="14" rx="5" fill="#c7522a"/><circle cx="62" cy="84" r="7" fill="#1f7a72"/><rect x="55" y="93" width="14" height="14" rx="5" fill="#1f7a72"/>'+T(84,102,'daqui a 12 anos: ?','font-size="15"'),300); }
+function figCadeia(){
+  const box=(x,t,c)=>'<rect x="'+x+'" y="20" width="44" height="34" rx="3" fill="'+c+'" stroke="#333"/>'+T(x+22,43,t,'text-anchor="middle" font-size="16" font-weight="700"');
+  const seta=(x,t)=>'<path d="M'+x+' 37 H'+(x+44)+' M'+(x+38)+' 32 L'+(x+44)+' 37 L'+(x+38)+' 42" stroke="#333" stroke-width="1.6" fill="none"/>'+T(x+22,26,t,'text-anchor="middle" font-size="14"');
+  return svgW('0 0 400 70',box(4,'?','#fdf2c8')+seta(50,'· 2')+box(98,'','#d9ece8')+seta(144,'· 3')+box(192,'','#d9ece8')+seta(238,'· 4')+box(286,'240','#f6d6d0'),400); }
+function figBarrasMarina(){ return svgW('0 0 380 90','<rect x="80" y="10" width="130" height="24" fill="#d9ece8" stroke="#333"/>'+T(145,27,'parte','text-anchor="middle" font-size="13"')+T(10,27,'Caio','font-size="14"')+
+  '<rect x="80" y="48" width="130" height="24" fill="#d9ece8" stroke="#333"/>'+T(145,65,'parte','text-anchor="middle" font-size="13"')+'<rect x="210" y="48" width="56" height="24" fill="#fdf2c8" stroke="#333"/>'+T(238,65,'+40','text-anchor="middle" font-size="13"')+T(10,65,'Marina','font-size="14"')+
+  '<path d="M276 10 Q286 10 286 24 V36 Q286 41 292 41 Q286 41 286 46 V58 Q286 72 276 72" fill="none" stroke="#333"/>'+T(298,46,'total: R$ 320','font-size="13"'),380); }
+function figPintores(){
+  let c=''; for(let i=0;i<30;i++) c+='<rect x="'+(20+i*11)+'" y="30" width="11" height="22" fill="'+(i<12?'#d9ecf3':'#fdf2c8')+'" stroke="#333" stroke-width=".8"/>';
+  return svgW('0 0 370 90',T(185,20,'R$ 1.500,00','text-anchor="middle" font-size="14"')+c+T(86,74,'1.º pintor: 12 h','text-anchor="middle" font-size="13"')+T(251,74,'2.º pintor: 18 h','text-anchor="middle" font-size="13"'),370); }
+function figAcai(){ let c=''; for(let i=0;i<4;i++) c+='<circle cx="'+(110+i*16)+'" cy="18" r="6" fill="#1f7a72"/>'; for(let i=0;i<10;i++) c+='<circle cx="'+(40+i*16)+'" cy="48" r="6" fill="#c7522a"/>';
+  return svgW('0 0 330 64',c+T(180,23,'4 pessoas = 200 g','font-size="15"')+T(205,53,'10 pessoas = ?','font-size="15"'),330); }
+function figVan(){ return svgW('0 0 380 100','<path d="M30 60 H350" stroke="#22324a" stroke-width="2"/><circle cx="30" cy="60" r="5" fill="#22324a"/><circle cx="350" cy="60" r="5" fill="#22324a"/><circle cx="110" cy="60" r="6" fill="#c7522a"/>'+
+  '<path d="M30 30 Q30 22 40 22 H180 Q190 22 190 14 Q190 22 200 22 H340 Q350 22 350 30" fill="none" stroke="#333"/>'+T(190,12,'180 km','text-anchor="middle" font-size="14"')+T(110,48,'parada','text-anchor="middle" font-size="13" fill="#c7522a"')+
+  T(30,82,'saída','text-anchor="middle" font-size="13"')+T(350,82,'chegada','text-anchor="middle" font-size="13"')+T(190,96,'(figura sem escala)','text-anchor="middle" font-size="12" font-style="italic"'),380); }
+function figAbaco(){
+  const hast=[['unidades',4],['décimos',0],['centésimos',7],['milésimos',2]]; let c='<rect x="20" y="118" width="300" height="10" rx="4" fill="#66717c"/>';
+  hast.forEach((h,i)=>{ const x=60+i*76; c+='<path d="M'+x+' 20 V118" stroke="#333" stroke-width="2"/>'; for(let k=0;k<h[1];k++) c+='<ellipse cx="'+x+'" cy="'+(110-k*11)+'" rx="8" ry="5.5" fill="#5f9ea0" stroke="#2c5b5c"/>'; c+=T(x,146,h[0],'text-anchor="middle" font-size="12"'); });
+  c+=T(98,116,',','text-anchor="middle" font-size="22" font-weight="700"');
+  return svgW('0 0 340 152',c,340); }
+function figJarra(){ let c='<path d="M60 10 V170 H140 V10" fill="none" stroke="#333" stroke-width="3"/><rect x="62" y="110" width="76" height="58" fill="#cfe7ef"/>';
+  for(let k=1;k<=8;k++){ const y=170-k*20; c+='<path d="M140 '+y+' H150" stroke="#333"/>'+T(156,y+5,k===8?'1 L':k+'/8','font-size="12"'+(k===8?' font-weight="700"':'')); }
+  return svgW('0 0 220 180',c,200); }
+function figCorrida(){ const L=[['Ana','12,45 s'],['Bruno','12,5 s'],['Carol','12,405 s'],['Davi','12,54 s']]; let c=T(300,14,'chegada','text-anchor="middle" font-size="12"')+'<path d="M300 20 V150" stroke="#333" stroke-width="2.5" stroke-dasharray="3 3"/>';
+  L.forEach((l,i)=>{ const y=24+i*32; c+=T(48,y+18,l[0],'text-anchor="end" font-size="14" font-weight="700"')+'<rect x="56" y="'+y+'" width="244" height="24" fill="#d9ece8" stroke="#333" stroke-width=".8"/><circle cx="68" cy="'+(y+12)+'" r="6" fill="#c7522a"/>'+T(312,y+17,l[1],'font-size="14"'); });
+  return svgW('0 0 390 156',c,390); }
+function figReta(){ let c='<path d="M20 40 H360" stroke="#222" stroke-width="2"/><path d="M352 35 L362 40 L352 45" fill="#222"/>';
+  for(let k=0;k<=10;k++){ const x=30+k*30; c+='<path d="M'+x+' '+(k%10===0?30:34)+' V'+(k%10===0?50:46)+'" stroke="#222" stroke-width="'+(k%10===0?2:1.2)+'"/>'; }
+  c+=T(30,68,'1','text-anchor="middle" font-size="16"')+T(330,68,'2','text-anchor="middle" font-size="16"')+'<circle cx="240" cy="40" r="6" fill="#c7522a"/>'+T(240,22,'P','text-anchor="middle" font-size="17" font-weight="700" fill="#c7522a"');
+  return svgW('0 0 380 78',c,380); }
+function figMalha(){ let c=''; for(let r=0;r<10;r++) for(let k=0;k<10;k++){ const pint=(r>=7)||(r===6&&k<5); c+='<rect x="'+(10+k*20)+'" y="'+(10+r*20)+'" width="20" height="20" fill="'+(pint?'#8bbcb4':'#fff')+'" stroke="#7d8a99" stroke-width=".8"/>'; }
+  return svgW('0 0 220 220',c+'<rect x="10" y="10" width="200" height="200" fill="none" stroke="#22324a" stroke-width="2.5"/>',210); }
+function figCriancas(){ let c=''; for(let r=0;r<3;r++) for(let k=0;k<12;k++){ const x=20+k*24, y=12+r*34; c+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="#9aa3b2"/><rect x="'+(x-5)+'" y="'+(y+7)+'" width="10" height="13" rx="4" fill="#9aa3b2"/>'; }
+  return svgW('0 0 300 110',c,300); }
+function figEtiquetas(a,b,c2,d){ const tag=(x,t1,t2)=>'<path d="M'+(x+18)+' 10 H'+(x+150)+' V60 H'+(x+18)+' L'+x+' 35 Z" fill="#fdf2c8" stroke="#333"/><circle cx="'+(x+22)+'" cy="35" r="4" fill="none" stroke="#333"/>'+T(x+86,28,t1,'text-anchor="middle" font-size="12"')+T(x+86,50,t2,'text-anchor="middle" font-size="16" font-weight="700"');
+  return svgW('0 0 340 70',tag(4,a,b)+tag(176,c2,d),340); }
+function figPapelaria(){ return svgW('0 0 330 100','<rect x="20" y="20" width="60" height="12" fill="#fdf2c8" stroke="#333"/><path d="M26 20v5M32 20v4M38 20v5M44 20v4M50 20v5M56 20v4M62 20v5M68 20v4" stroke="#333"/>'+T(50,58,'régua','text-anchor="middle" font-size="13"')+T(50,78,'R$ 3,15','text-anchor="middle" font-size="15" font-weight="700"')+
+  '<rect x="148" y="8" width="30" height="38" fill="#e3f1f5" stroke="#333"/><path d="M155 18h16M155 26h16M155 34h16" stroke="#333"/>'+T(163,62,'caderno','text-anchor="middle" font-size="13"')+T(163,82,'R$ 12,90','text-anchor="middle" font-size="15" font-weight="700"')+
+  '<path d="M250 40 L282 10 M260 44 L292 14" stroke="#c7522a" stroke-width="5" stroke-linecap="round"/>'+T(272,62,'canetas','text-anchor="middle" font-size="13"')+T(272,82,'R$ 2,45 cada','text-anchor="middle" font-size="15" font-weight="700"'),330); }
+function figQueijo(){ let c=''; for(let i=0;i<9;i++) c+='<ellipse cx="'+(132+(i%5)*16+(i>4?8:0))+'" cy="'+(i>4?26:38)+'" rx="8" ry="5" fill="#e9b97a" stroke="#a5743f"/>';
+  return svgW('0 0 300 96',c+'<rect x="100" y="44" width="120" height="8" fill="#c9cfd6" stroke="#666"/><rect x="80" y="52" width="160" height="34" rx="6" fill="#8c96a3" stroke="#555"/><rect x="122" y="60" width="76" height="20" rx="3" fill="#f7f7f2" stroke="#333"/>'+T(160,76,'2,4 kg','text-anchor="middle" font-size="15" font-weight="700"'),300); }
+function figFita(){ let c='<rect x="20" y="14" width="300" height="20" fill="#fdf2c8" stroke="#333"/>'; for(let i=0;i<=40;i++) c+='<path d="M'+(20+i*7.5)+' 14 v4" stroke="#333" stroke-width=".7"/>';
+  return svgW('0 0 340 80',c+T(170,29,'fita de 4,8 m','text-anchor="middle" font-size="13" font-weight="700"')+'<rect x="20" y="48" width="38" height="20" fill="#d9ece8" stroke="#333"/>'+T(70,63,'pedaço de 0,6 m','font-size="13"'),340); }
+function figAmigos(){ let c=''; for(let i=0;i<4;i++) c+='<circle cx="'+(30+i*30)+'" cy="12" r="6" fill="#1f7a72"/><rect x="'+(24+i*30)+'" y="21" width="12" height="15" rx="5" fill="#1f7a72"/>'; return svgW('0 0 150 40',c,150); }
+function figCalc(){ let c='<rect x="20" y="4" width="120" height="150" rx="10" fill="#c9cfd6" stroke="#555"/><rect x="32" y="14" width="96" height="30" rx="3" fill="#eef3e8" stroke="#555"/>'+T(122,26,'1 ÷ 3 =','text-anchor="end" font-size="10"')+T(122,40,'0,3333333','text-anchor="end" font-size="13" font-weight="700"');
+  for(let r=0;r<4;r++) for(let k=0;k<4;k++) c+='<rect x="'+(34+k*24)+'" y="'+(54+r*24)+'" width="18" height="18" rx="3" fill="#fff" stroke="#777"/>';
+  return svgW('0 0 160 160',c,150); }
+function figInstrumentos(){ return svgW('0 0 330 60','<rect x="10" y="26" width="60" height="12" fill="#fdf2c8" stroke="#333"/><path d="M16 26v5M22 26v4M28 26v5M34 26v4M40 26v5M46 26v4M52 26v5M58 26v4M64 26v5" stroke="#333"/>'+
+  '<rect x="118" y="6" width="8" height="38" rx="4" fill="#fff" stroke="#333"/><rect x="120" y="22" width="4" height="24" fill="#c7522a"/><circle cx="122" cy="48" r="7" fill="#c7522a" stroke="#333"/>'+
+  '<circle cx="200" cy="30" r="20" fill="#fff" stroke="#22324a" stroke-width="2.5"/><path d="M200 30 V16 M200 30 L210 36" stroke="#22324a" stroke-width="2.5" stroke-linecap="round"/>'+
+  '<path d="M290 10 V44 M262 14 H318" stroke="#22324a" stroke-width="2.5"/><path d="M262 14 L252 30 H272 Z M318 14 L308 30 H328 Z" fill="#fff" stroke="#22324a"/><rect x="278" y="44" width="24" height="5" fill="#22324a"/>',330); }
+function figCasaEscola(){ return svgW('0 0 330 90','<path d="M20 44 L40 28 L60 44 Z" fill="#fdf2c8" stroke="#333"/><rect x="26" y="44" width="28" height="22" fill="#d9ece8" stroke="#333"/>'+T(40,84,'casa','text-anchor="middle" font-size="13"')+
+  '<path d="M64 56 H140 V38 H250 V56" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6 4"/>'+T(170,24,'1,25 km','text-anchor="middle" font-size="15" font-weight="700"')+
+  '<rect x="270" y="26" width="16" height="16" fill="#d9ece8" stroke="#333"/><rect x="258" y="42" width="40" height="26" fill="#f6d6d0" stroke="#333"/>'+T(278,84,'escola','text-anchor="middle" font-size="13"'),330); }
+function figRet(w,h,base,alt,extra){ return svgW('0 0 330 '+(h+60),'<rect x="40" y="10" width="'+w+'" height="'+h+'" fill="#d9ece8" stroke="#22324a" stroke-width="2"/>'+(extra||'')+T(40+w/2,h+34,base,'text-anchor="middle" font-size="14"')+T(52+w,10+h/2+5,alt,'font-size="14"'),330); }
+function figRelogio(h,m){
+  let c='<circle cx="80" cy="80" r="70" fill="#fff" stroke="#22324a" stroke-width="4"/>';
+  for(let i=0;i<60;i++){ const a=i*6*Math.PI/180, r1=i%5?62:58; c+='<path d="M'+(80+r1*Math.sin(a)).toFixed(1)+' '+(80-r1*Math.cos(a)).toFixed(1)+' L'+(80+66*Math.sin(a)).toFixed(1)+' '+(80-66*Math.cos(a)).toFixed(1)+'" stroke="#22324a" stroke-width="'+(i%5?1:2)+'"/>'; }
+  for(let n=1;n<=12;n++){ const a=n*30*Math.PI/180; c+=T((80+48*Math.sin(a)).toFixed(1),(80-48*Math.cos(a)+5).toFixed(1),n,'text-anchor="middle" font-size="13"'); }
+  const ah=((h%12)+m/60)*30*Math.PI/180, am=m*6*Math.PI/180;
+  c+='<path d="M80 80 L'+(80+32*Math.sin(ah)).toFixed(1)+' '+(80-32*Math.cos(ah)).toFixed(1)+'" stroke="#22324a" stroke-width="5" stroke-linecap="round"/>';
+  c+='<path d="M80 80 L'+(80+54*Math.sin(am)).toFixed(1)+' '+(80-54*Math.cos(am)).toFixed(1)+'" stroke="#c7522a" stroke-width="3" stroke-linecap="round"/><circle cx="80" cy="80" r="4" fill="#22324a"/>';
+  return svgW('0 0 160 160',c,170); }
+function figCronometro(){ let c='<rect x="72" y="2" width="16" height="10" fill="#22324a"/><circle cx="80" cy="56" r="42" fill="#fff" stroke="#22324a" stroke-width="3"/>';
+  for(let i=0;i<12;i++){ const a=i*30*Math.PI/180; c+='<path d="M'+(80+34*Math.sin(a)).toFixed(1)+' '+(56-34*Math.cos(a)).toFixed(1)+' L'+(80+40*Math.sin(a)).toFixed(1)+' '+(56-40*Math.cos(a)).toFixed(1)+'" stroke="#22324a"/>'; }
+  return svgW('0 0 260 104',c+'<path d="M80 56 L100 32" stroke="#c7522a" stroke-width="3" stroke-linecap="round"/>'+T(136,58,'187 s','font-size="20" font-weight="700"')+T(136,78,'tempo da prova','font-size="12"'),260); }
+function figTermometro(){ return svgW('0 0 330 190','<rect x="150" y="10" width="20" height="140" rx="10" fill="#fff" stroke="#333" stroke-width="2"/><rect x="156" y="40" width="8" height="118" fill="#b5532f"/><circle cx="160" cy="160" r="15" fill="#b5532f" stroke="#333" stroke-width="2"/>'+
+  '<path d="M140 40 H150 M170 40 H180 M140 110 H150 M170 110 H180" stroke="#333" stroke-width="2"/>'+T(134,45,'100 °C','text-anchor="end" font-size="13" font-weight="700"')+T(186,45,'212 °F','font-size="13" font-weight="700" fill="#c7522a"')+T(236,45,'373 K','font-size="13" font-weight="700" fill="#1f7a72"')+
+  T(134,115,'0 °C','text-anchor="end" font-size="13" font-weight="700"')+T(186,115,'32 °F','font-size="13" font-weight="700" fill="#c7522a"')+T(236,115,'273 K','font-size="13" font-weight="700" fill="#1f7a72"')+
+  T(134,66,'água ferve','text-anchor="end" font-size="11" font-style="italic"')+T(134,96,'água congela','text-anchor="end" font-size="11" font-style="italic"')+
+  T(100,186,'Celsius','text-anchor="middle" font-size="11"')+T(200,186,'Fahrenheit','text-anchor="middle" font-size="11"')+T(254,186,'Kelvin','text-anchor="middle" font-size="11"'),330); }
+
+const QUESTOES=[
+ {cap:10, txt:'Na lousa, o professor escreveu quatro igualdades. <b>Qual delas é verdadeira?</b>', fig:figLousa, op:['I','II','III','IV'], ok:2},
+ {cap:10, txt:'A balança está em equilíbrio. De um lado há 36 + 14 e, do outro, 30 + ?. <b>Qual número deve substituir a interrogação?</b>', fig:figBalanca, op:['14','20','30','50'], ok:1},
+ {cap:10, txt:'Duas irmãs gêmeas têm, juntas, 30 anos de idade. <b>Daqui a 12 anos, quantos anos terão juntas?</b>', fig:figGemeas, op:['30','42','48','54'], ok:3},
+ {cap:10, txt:'Pensei em um número, multipliquei-o por 2, o resultado por 3 e este por 4. Obtive 240. <b>Qual era o número que pensei?</b>', fig:figCadeia, op:['10','12','20','24'], ok:0},
+ {cap:10, txt:'Marina e Caio têm, juntos, R$ 320,00. Marina tem R$ 40,00 a mais que Caio. <b>Quantos reais Marina tem?</b>', fig:figBarrasMarina, op:['R$ 140,00','R$ 160,00','R$ 180,00','R$ 200,00'], ok:2},
+ {cap:10, txt:'Dois pintores dividiram R$ 1.500,00 de forma proporcional às horas trabalhadas: o primeiro trabalhou 12 h e o segundo, 18 h. <b>Quanto recebeu o pintor que trabalhou 18 horas?</b>', fig:figPintores, op:['R$ 600,00','R$ 900,00','R$ 1.000,00','R$ 1.500,00'], ok:1},
+ {cap:10, txt:'Uma receita de vitamina de açaí serve 4 pessoas e leva 200 g de polpa. <b>Mantendo a proporção, quantos gramas de polpa são necessários para servir 10 pessoas?</b>', fig:figAcai, op:['200 g','400 g','450 g','500 g'], ok:3},
+ {cap:10, txt:'Uma van percorre um trecho de 180 km. Em certo momento ela para, quando a distância já percorrida é igual a um terço da distância que ainda falta. <b>Quantos quilômetros a van já havia percorrido?</b>', fig:figVan, op:['45 km','60 km','90 km','135 km'], ok:0},
+ {cap:11, txt:'Em uma prova de salto, o atleta registrou doze inteiros e quarenta e cinco milésimos de metro. <b>Como esse número se escreve na forma decimal?</b>', op:['12,45','12,045','12,0045','12,450'], ok:1},
+ {cap:11, txt:'O ábaco abaixo representa um número decimal. <b>Qual é esse número?</b>', fig:figAbaco, op:['4,72','4,702','40,72','4,072'], ok:3},
+ {cap:11, txt:'Uma jarra de 1 litro está com água até '+fr(3,8)+' da sua capacidade. <b>Quantos litros de água há na jarra, em notação decimal?</b>', fig:figJarra, op:['0,375 L','0,3 L','0,38 L','0,83 L'], ok:0},
+ {cap:11, txt:'Em uma prova de 100 m, os tempos de quatro corredores foram: Ana, 12,45 s; Bruno, 12,5 s; Carol, 12,405 s; Davi, 12,54 s. <b>Quem fez o melhor tempo (o menor)?</b>', fig:figCorrida, op:['Ana','Bruno','Carol','Davi'], ok:2},
+ {cap:11, txt:'O ponto P está marcado na reta numérica abaixo, dividida em partes iguais. <b>Qual número decimal corresponde a P?</b>', fig:figReta, op:['1,7','1,07','1,17','17'], ok:0},
+ {cap:11, txt:'A malha abaixo tem 100 quadradinhos iguais, dos quais 35 estão pintados. <b>Que número decimal representa a parte pintada?</b>', fig:figMalha, op:['3,5','0,035',fr(3,5),'0,35'], ok:3},
+ {cap:11, txt:'Em uma turma de 36 crianças, 25 % vão de bicicleta para a escola. <b>Quantas crianças vão de bicicleta?</b>', fig:figCriancas, op:['9','12','18','25'], ok:0},
+ {cap:11, txt:'Um tênis custa R$ 250,00 a prazo e R$ 200,00 à vista. <b>Qual é o desconto, em porcentagem, para quem paga à vista?</b>', fig:()=>figEtiquetas('a prazo','R$ 250,00','à vista','R$ 200,00'), op:['5 %','10 %','20 %','25 %'], ok:2},
+ {cap:11, txt:'Uma loja oferece 15 % de desconto em uma mochila que custa R$ 240,00. <b>Qual é o preço da mochila com o desconto?</b>', fig:()=>figEtiquetas('mochila','R$ 240,00','desconto','15 %'), op:['R$ 36,00','R$ 204,00','R$ 225,00','R$ 276,00'], ok:1},
+ {cap:12, txt:'Na papelaria, Júlia comprou 1 régua, 1 caderno e 2 canetas iguais. Pagou com uma nota de R$ 50,00. <b>Quanto Júlia recebeu de troco?</b>', fig:figPapelaria, op:['R$ 29,05','R$ 29,95','R$ 30,05','R$ 20,95'], ok:0},
+ {cap:12, txt:'Sabendo que 83 · 14 = 1.162, calcule 0,83 · 1,4. <b>Qual é o resultado?</b>', op:['116,2','11,62','0,1162','1,162'], ok:3},
+ {cap:12, txt:'Uma balança digital mostra 2,4 kg de queijo, que custa R$ 36,50 o quilograma. <b>Quanto custa esse queijo?</b>', fig:figQueijo, op:['R$ 76,50','R$ 86,40','R$ 87,60','R$ 90,00'], ok:2},
+ {cap:12, txt:'Calcule (0,5)<sup>3</sup>. <b>Qual é o resultado?</b>', op:['0,125','0,0125','0,15','1,5'], ok:0},
+ {cap:12, txt:'Um parafuso custa R$ 0,35. <b>Quanto custam 1.000 desses parafusos?</b>', op:['R$ 3,50','R$ 35,00','R$ 350,00','R$ 3.500,00'], ok:2},
+ {cap:12, txt:'Uma fita de 4,8 m será cortada em pedaços de 0,6 m cada. <b>Quantos pedaços serão obtidos?</b>', fig:figFita, op:['6','7','8','9'], ok:2},
+ {cap:12, txt:'Quatro amigos dividiram igualmente uma conta de R$ 15,00. <b>Quanto cada um pagou?</b>', fig:figAmigos, op:['R$ 3,25','R$ 3,50','R$ 3,75','R$ 4,00'], ok:2},
+ {cap:12, txt:'Ao calcular 1 : 3 na calculadora, Rui obteve 0,3333333… (os algarismos 3 se repetem sem parar). <b>Qual das frações abaixo também resulta em uma dízima periódica?</b>', fig:figCalc, op:[fr(1,4),fr(3,5),fr(7,8),fr(5,9)], ok:3},
+ {cap:12, txt:'A dízima periódica 0,4444… é representada por uma fração. <b>Qual é essa fração?</b>', op:[fr(4,10),fr(4,9),fr(44,100),fr(40,9)], ok:1},
+ {cap:13, txt:'Observe os instrumentos de medida a seguir. <b>Qual das opções abaixo NÃO é uma grandeza?</b>', fig:figInstrumentos, op:['Alegria','Tempo','Massa','Comprimento'], ok:0},
+ {cap:13, txt:'A distância entre a casa de Lia e a escola é de 1,25 km. <b>Quantos metros isso representa?</b>', fig:figCasaEscola, op:['0,125 m','125 m','12.500 m','1.250 m'], ok:3},
+ {cap:13, txt:'Uma quadra de vôlei tem 18 m de comprimento e 9 m de largura. <b>Qual é o perímetro dessa quadra?</b>', fig:()=>figRet(200,100,'18 m','9 m','<path d="M140 10 V110" stroke="#22324a" stroke-width="2"/><path d="M100 10 V110 M180 10 V110" stroke="#22324a" stroke-width="1"/>'+T(140,64,'rede','text-anchor="middle" font-size="11" font-style="italic"')), op:['27 m','54 m','81 m','162 m'], ok:1},
+ {cap:13, txt:'Um terreno retangular de 25 m por 18 m será cercado com 3 voltas de arame. <b>Quantos metros de arame serão usados?</b>', fig:()=>figRet(200,130,'25 m','18 m','<rect x="34" y="4" width="212" height="142" fill="none" stroke="#22324a"/><rect x="37" y="7" width="206" height="136" fill="none" stroke="#22324a"/>'+T(140,80,'terreno','text-anchor="middle" font-size="13"')), op:['86 m','129 m','258 m','450 m'], ok:2},
+ {cap:13, txt:'Um quadro retangular mede 1,5 m de comprimento e 80 cm de largura. Será colocada uma moldura em todo o contorno. <b>Quantos metros de moldura serão necessários?</b>', fig:()=>figRet(170,90,'1,5 m','80 cm','<rect x="40" y="10" width="170" height="90" fill="none" stroke="#9b3a1a" stroke-width="7"/><rect x="50" y="20" width="150" height="70" fill="#d9ece8" stroke="#22324a"/>'+T(125,60,'quadro','text-anchor="middle" font-size="13"')), op:['2,3 m','4,6 m','5,2 m','6,2 m'], ok:1},
+ {cap:13, txt:'A duração de um filme é de 2,25 horas. <b>Essa duração equivale a quanto tempo?</b>', op:['2 h 15 min','2 h 25 min','2 h 30 min','2 h 45 min'], ok:0},
+ {cap:13, txt:'O relógio abaixo marca o horário em que Pedro saiu de casa. A viagem durou 1 h 50 min. <b>A que horas Pedro chegou?</b>', fig:()=>figRelogio(3,40), op:['17 h 10 min','17 h 20 min','17 h 50 min','17 h 30 min'], ok:3},
+ {cap:13, txt:'Um nadador completou a prova em 187 segundos. <b>Esse tempo equivale a:</b>', fig:figCronometro, op:['3 min 17 s','3 min 7 s','1 min 87 s','18 min 7 s'], ok:1},
+ {cap:13, txt:'Sobre as escalas de temperatura, observe o termômetro. <b>Assinale a afirmativa correta.</b>', fig:figTermometro, op:['A temperatura é medida em metros.','A água ferve a 100 °F.','A escala Fahrenheit é a mais usada no Brasil.','A água congela a 0 °C, que equivale a 32 °F.'], ok:3}
+];
+QUESTOES.forEach((q,i)=>{ q.num=i+1; });
+
+/* =====================================================================
+   FLUXO DA PROVA
+   ===================================================================== */
+const TOTAL=QUESTOES.length, LETRA='abcd';
+const CAP_NOME={10:'Capítulo 10 · Igualdades e problemas',11:'Capítulo 11 · Números decimais e porcentagem',12:'Capítulo 12 · Operações com decimais',13:'Capítulo 13 · Medidas'};
+const SHAPES=['<svg class="sh" viewBox="0 0 40 40"><path d="M20 4 L37 35 H3 Z" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 40 40"><path d="M20 3 L37 20 L20 37 L3 20 Z" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" rx="3" fill="#fff"/></svg>'];
+const DONE_KEY='quizrev_feitos_v1', PROG_KEY='quizrev_progresso_v1';
+let st=null, timer=null;
+function loadJ(k,def){ try{ const v=localStorage.getItem(k); if(v!==null) return JSON.parse(v); }catch(e){} return def; }
+function saveJ(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+const alunoKey=(nome,turma)=>(String(nome).trim()+'|'+String(turma||'').trim()).toLowerCase();
+
+function show(name){ ['start','game','end'].forEach(s=>{ $(s).hidden=(s!==name); }); }
+
+function startGame(){
+  $('startMsg').textContent='';
+  const nome=$('inNome').value.trim(), turma=$('selTurma').value;
+  if(!nome){ $('startMsg').textContent='Digite seu nome para começar.'; $('inNome').focus(); return; }
+  if(!turma){ $('startMsg').textContent='Escolha a sua turma.'; $('selTurma').focus(); return; }
+  if(ONLINE) saveMe();
+  const k=alunoKey(nome,turma);
+  const prog=loadJ(PROG_KEY,null);
+  if(prog && prog.k===k && prog.i<TOTAL){ st=prog; st.resumed=true; }   // continua de onde parou (se a página fechou)
+  else {
+    const feitos=loadJ(DONE_KEY,{});
+    if(UMA_TENTATIVA && feitos[k]){ $('startMsg').textContent='Você já fez esta prova neste aparelho ('+feitos[k].acertos+' de '+TOTAL+' acertos). Fale com o professor.'; return; }
+    const ordem=EMBARALHAR?shuffle(QUESTOES.map((q,i)=>i)):QUESTOES.map((q,i)=>i);
+    const alts=ordem.map(()=>EMBARALHAR?shuffle([0,1,2,3]):[0,1,2,3]);
+    st={k,nome,turma,ordem,alts,i:0,pontos:0,acertos:0,resp:{},tempo:0,id:'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),inicio:Date.now()};
+  }
+  saveJ(PROG_KEY,st);
+  $('qPts').hidden=!MOSTRAR_ACERTO;
+  musicStart(); sfx.start();
+  show('game'); render();
+}
+function render(){
+  const qi=st.ordem[st.i], q=QUESTOES[qi];
+  $('qNum').textContent='Questão '+(st.i+1)+'/'+TOTAL;
+  $('qBar').style.width=(100*st.i/TOTAL)+'%';
+  $('qPts').textContent=st.pontos+' pts';
+  $('qCap').textContent=CAP_NOME[q.cap]||'';
+  $('qTxt').innerHTML=q.txt;
+  $('qFig').innerHTML=q.fig?q.fig():'';
+  const box=$('tiles'); box.className='tiles'; box.innerHTML='';
+  st.alts[st.i].forEach((oi,pos)=>{
+    const b=document.createElement('button'); b.type='button'; b.className='tile t'+pos; b.dataset.oi=oi;
+    b.innerHTML=SHAPES[pos]+'<span>'+q.op[oi]+'</span>';
+    b.addEventListener('click',()=>answer(oi,b));
+    box.appendChild(b);
+  });
+  st.locked=false; st.t0=Date.now(); st.lastTick=null;
+  clearInterval(timer); timer=setInterval(tickTimer,100); tickTimer();
+  window.scrollTo({top:0});
+}
+function tickTimer(){
+  if(!st||st.locked) return;
+  const el=(Date.now()-st.t0)/1000, left=Math.max(0,TEMPO_POR_QUESTAO-el);
+  $('ringTxt').textContent=Math.ceil(left);
+  $('ringArc').setAttribute('stroke-dashoffset',(169.6*(1-left/TEMPO_POR_QUESTAO)).toFixed(1));
+  $('ring').classList.toggle('low',left<=10);
+  const s=Math.ceil(left); if(s<=5&&s>0&&st.lastTick!==s){ st.lastTick=s; sfx.tick(); }
+  if(left<=0) answer(-1,null);
+}
+function answer(oi,btn){
+  if(!st||st.locked) return;
+  st.locked=true; clearInterval(timer);
+  const qi=st.ordem[st.i], q=QUESTOES[qi], t=Math.min(TEMPO_POR_QUESTAO,(Date.now()-st.t0)/1000);
+  const ok=(oi===q.ok), pts=ok?Math.round(1000*(1-0.5*t/TEMPO_POR_QUESTAO)):0;
+  st.tempo+=t; st.pontos+=pts; if(ok) st.acertos++;
+  st.resp[q.num]=oi<0?'-':LETRA[oi];
+  st.i++;
+  saveJ(PROG_KEY,st);
+  const box=$('tiles'); box.classList.add('done');
+  if(btn) btn.classList.add('pick');
+  if(MOSTRAR_ACERTO){ [...box.children].forEach(b=>{ if(+b.dataset.oi===q.ok) b.classList.add('right'); else if(b===btn) b.classList.add('wrong'); }); }
+  // aviso entre as questões
+  let big, cls, sub;
+  if(oi<0){ big='Tempo esgotado!'; cls='no'; sub=MOSTRAR_ACERTO?'Sem pontos nesta questão.':'Esta questão ficou sem resposta.'; sfx.no(); }
+  else if(!MOSTRAR_ACERTO){ big='Resposta registrada!'; cls='neu'; sub='Respondida em '+fmt(t,1)+' s.'; sfx.pick(); }
+  else if(ok){ big='Correto!'; cls='ok'; sub='+'+pts+' pontos'; sfx.ok(); }
+  else { big='Não foi dessa vez'; cls='no'; sub='Sem pontos nesta questão.'; sfx.no(); }
+  $('ovBig').textContent=big; $('ovBig').className='big '+cls; $('ovSub').textContent=sub;
+  $('btnNext').textContent=st.i>=TOTAL?'Ver resultado':'Próxima';
+  setTimeout(()=>{ $('ov').hidden=false; $('btnNext').focus(); },MOSTRAR_ACERTO?700:250);
+}
+function next(){
+  $('ov').hidden=true;
+  if(st.i>=TOTAL) finish(); else render();
+}
+function respostasTxt(){
+  return QUESTOES.map(q=>{ const r=st.resp[q.num]||'-'; return String(q.num).padStart(2,'0')+r+(r===LETRA[q.ok]?'✓':'✗'); }).join(' ');
+}
+function finish(){
+  clearInterval(timer); musicStop();
+  const feitos=loadJ(DONE_KEY,{}); feitos[st.k]={acertos:st.acertos,pontos:st.pontos,data:Date.now()}; saveJ(DONE_KEY,feitos);
+  try{ localStorage.removeItem(PROG_KEY); }catch(e){}
+  const entry={id:st.id,nome:st.nome,equipe:'',turma:st.turma,pontos:st.pontos,acertos:st.acertos,mode:'prova',tempo:Math.round(st.tempo),resp:respostasTxt()};
+  const list=loadRank(); list.push(entry); list.sort((a,b)=>b.pontos-a.pontos||b.acertos-a.acertos); saveRank(list.slice(0,200));
+  $('eWho').textContent=st.nome+' · '+st.turma;
+  $('eScore').textContent=st.pontos+' pontos';
+  $('eHits').textContent=st.acertos+' de '+TOTAL+' questões certas';
+  const m=Math.floor(st.tempo/60), s=Math.round(st.tempo%60);
+  $('eTime').textContent='Tempo total: '+m+' min '+s+' s';
+  $('sendStatus').textContent='';
+  if(ONLINE){ $('rankEndTitle').textContent='Ranking online'; $('ePos').textContent=''; $('rankEnd').innerHTML='<div class="empty">Carregando…</div>'; $('podium').innerHTML=''; }
+  else { $('rankEndTitle').textContent='Ranking deste computador'; $('ePos').textContent=''; const l=loadRank().slice().sort(rankSort); $('podium').innerHTML=podiumHTML(l); renderRank($('rankEnd'),st.id); }
+  show('end'); sfx.fim(); confetes();
+  endOnline(entry);
+  st=null;
+}
+function podiumHTML(list){
+  const top=list.filter(r=>!isProf(r.turma)).slice(0,3);
+  if(!top.length) return '';
+  const blk=(r,p)=>r?'<div class="pd pd'+p+'"><div class="who">'+nameHTML(r.nome,p-1,r.turma)+'</div><div class="blk">'+p+'º<small>'+r.pontos+' pts</small></div></div>':'<div class="pd pd'+p+'"></div>';
+  return blk(top[1],2)+blk(top[0],1)+blk(top[2],3);
+}
+function home(){ musicStop(); renderBoards(); show('start'); if(ONLINE) fetchRanking(false); }
+
+/* =====================================================================
+   RANKING
+   ===================================================================== */
+const RANK_KEY='quizrev_ranking_v1';
+let memRank=[];
+function loadRank(){ try{ const v=localStorage.getItem(RANK_KEY); if(v!==null) return JSON.parse(v); }catch(e){} return memRank; }
+function saveRank(l){ memRank=l; try{ localStorage.setItem(RANK_KEY,JSON.stringify(l)); }catch(e){} }
+const MODE_NAME={prova:'Prova'};
+/* ===== Exportar / importar ranking e placar das turmas ===== */
+const IMP_KEY='quizrev_importados_v1', LBL_KEY='quizrev_turma_v1';
+let memImp={}, memLbl='', boardSel='local', msgTimer=null;
+function loadImp(){ try{ const v=localStorage.getItem(IMP_KEY); if(v!==null) return JSON.parse(v)||{}; }catch(e){} return memImp; }
+function saveImp(o){ memImp=o; try{ localStorage.setItem(IMP_KEY,JSON.stringify(o)); }catch(e){} }
+function loadLbl(){ try{ const v=localStorage.getItem(LBL_KEY); if(v!==null) return v; }catch(e){} return memLbl; }
+function saveLbl(v){ memLbl=v; try{ localStorage.setItem(LBL_KEY,v); }catch(e){} }
+const ekey=r=>[r.id,r.nome,r.pontos].join('|');
+function rkMsg(t,cls){
+  const m=$('rkMsg'); m.textContent=t; m.className='note'+(cls?' '+cls:'');
+  clearTimeout(msgTimer); msgTimer=setTimeout(()=>{ m.textContent=''; m.className='note'; },7000);
+}
+function cleanEntry(r){
+  if(!r||typeof r!=='object'||r.nome===undefined||!isFinite(Number(r.pontos))) return null;
+  return {id:r.id,turma:String(r.turma||'').slice(0,24),nome:String(r.nome).slice(0,40),equipe:String(r.equipe||'').slice(0,40),
+          pontos:Math.round(Number(r.pontos)),acertos:Math.round(Number(r.acertos))||0,mode:r.mode==='inf'?'inf':'normal'};
+}
+function mergedBoards(){
+  const map={}, lbl=loadLbl().trim();
+  const add=(name,list)=>{ const m=map[name]||(map[name]=new Map()); list.forEach(r=>m.set(ekey(r),r)); };
+  const loc=loadRank(); if(loc.length) add(lbl||'Este computador',loc);
+  const imp=loadImp(); Object.keys(imp).forEach(n=>{ if(imp[n].length) add(n,imp[n]); });
+  return map;
+}
+function renderBoards(){
+  $('rkMain').hidden=!ONLINE;
+  if(ONLINE){
+    $('rkMain').innerHTML=[['on','Ranking online'],['loc','Este aparelho']].map(x=>'<button type="button" data-v="'+x[0]+'" class="'+(x[0]===rkView?'on':'')+'">'+x[1]+'</button>').join('');
+    [...$('rkMain').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{ rkView=b.dataset.v; renderBoards(); if(rkView==='on') fetchRanking(false); }));
+  }
+  const showOn=ONLINE&&rkView==='on';
+  $('onView').hidden=!showOn; $('locView').hidden=showOn;
+  if(showOn) renderOnline(); else renderLocal();
+}
+function renderLocal(){
+  const imp=loadImp(), nomes=Object.keys(imp).filter(n=>imp[n].length), lbl=loadLbl().trim();
+  if(boardSel!=='local' && !nomes.includes(boardSel)) boardSel='local';
+  if(document.activeElement!==$('inTurma')) $('inTurma').value=lbl;
+  const tabs=[{k:'local',t:'Este computador'+(lbl?' ('+lbl+')':'')}].concat(nomes.map(n=>({k:n,t:n+' ('+imp[n].length+')'})));
+  $('rkTabs').innerHTML=tabs.length>1?tabs.map(x=>'<button type="button" data-k="'+esc(x.k)+'" class="'+(x.k===boardSel?'on':'')+'">'+esc(x.t)+'</button>').join(''):'';
+  [...$('rkTabs').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{ boardSel=b.dataset.k; renderBoards(); }));
+  if(boardSel==='local') renderRank($('rankStart'),null); else renderRank($('rankStart'),null,imp[boardSel]);
+  $('btnClear').hidden=(boardSel!=='local');
+  $('btnDelBoard').hidden=(boardSel==='local');
+  // placar das turmas
+  const map=mergedBoards(), rows=Object.keys(map).map(n=>{
+    const best={}; map[n].forEach(r=>{ const k=(String(r.nome).trim()+'|'+String(r.equipe||'').trim()).toLowerCase(); best[k]=Math.max(best[k]||0,r.pontos); });
+    const v=Object.keys(best).map(k=>best[k]);
+    return {n:n,duplas:v.length,melhor:Math.max.apply(null,v),media:Math.round(v.reduce((a,b)=>a+b,0)/v.length)};
+  }).sort((a,b)=>b.media-a.media);
+  $('cmpPanel').hidden=(rows.length<2);
+  $('cmpBody').innerHTML=rows.map((r,i)=>'<tr class="'+(i===0?'lead':'')+'"><td>'+(i+1)+'º · '+esc(r.n)+'</td><td>'+r.duplas+'</td><td>'+r.melhor+'</td><td>'+r.media+'</td></tr>').join('');
+}
+function doExport(){
+  const lbl=(loadLbl().trim()||(ONLINE?$('selTurma').value:'')).trim(), loc=loadRank();
+  if(!lbl && loc.length){ rkMsg('Digite o nome da turma deste computador (ex.: Turma 601) antes de exportar.','bad'); $('inTurma').focus(); return; }
+  const placares=[]; if(loc.length) placares.push({turma:lbl,ranking:loc});
+  const imp=loadImp(); Object.keys(imp).forEach(n=>{ if(imp[n].length) placares.push({turma:n,ranking:imp[n]}); });
+  if(!placares.length){ rkMsg('Ainda não há ranking para exportar.','bad'); return; }
+  const data={tipo:'quizrev-ranking',versao:1,exportadoEm:new Date().toISOString(),placares:placares};
+  const d=new Date(), z=n=>String(n).padStart(2,'0');
+  const slug=(lbl||'todas-as-turmas').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'ranking';
+  const nome='ranking-'+slug+'-'+d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())+'-'+z(d.getHours())+z(d.getMinutes())+'.json';
+  try{
+    const blob=new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=nome;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+    rkMsg('Exportado: '+nome+' (veja a pasta Downloads).','good');
+  }catch(e){ rkMsg('Não consegui gerar o arquivo neste navegador.','bad'); }
+}
+function readFile(f){
+  return new Promise((ok,no)=>{ const r=new FileReader(); r.onload=()=>ok(String(r.result)); r.onerror=()=>no(r.error); r.readAsText(f); });
+}
+async function doImport(files){
+  let novos=0, repetidos=0, erros=0, primeira=null;
+  for(const f of files){
+    try{
+      const d=JSON.parse(await readFile(f));
+      const pls=(d&&Array.isArray(d.placares))?d.placares:((d&&Array.isArray(d.ranking))?[{turma:d.turma,ranking:d.ranking}]:(Array.isArray(d)?[{turma:'',ranking:d}]:null));
+      if(!pls) throw new Error('formato');
+      const local=new Set(loadRank().map(ekey)), imp=loadImp();
+      pls.forEach(pl=>{
+        const nome=String(pl.turma||'').trim().slice(0,24)||'Sem nome';
+        const cur=imp[nome]||[], vistos=new Set(cur.map(ekey));
+        (pl.ranking||[]).forEach(r=>{
+          const e=cleanEntry(r); if(!e) return;
+          if(local.has(ekey(e))||vistos.has(ekey(e))){ repetidos++; return; }
+          cur.push(e); vistos.add(ekey(e)); novos++;
+        });
+        if(cur.length){ imp[nome]=cur.sort((a,b)=>b.pontos-a.pontos).slice(0,300); if(!primeira) primeira=nome; }
+      });
+      saveImp(imp);
+    }catch(e){ erros++; }
+  }
+  if(primeira) boardSel=primeira;
+  renderBoards();
+  if(erros && !novos && !repetidos) rkMsg('Arquivo inválido: use um arquivo gerado pelo botão Exportar ranking.','bad');
+  else rkMsg('Importado: '+novos+' resultado'+(novos===1?'':'s')+' novo'+(novos===1?'':'s')+(repetidos?' ('+repetidos+' já existiam)':'')+(erros?' · '+erros+' arquivo(s) inválido(s)':'')+'.',erros?'bad':'good');
+}
+
+/* ===== Ranking online ===== */
+const ONLINE=!!API_URL;
+const PEND_KEY='quizrev_pendentes_v1', ME_KEY='quizrev_eu_v1';
+let memPend=[], memMe=null, rkView='on', onData=null, onErr=false, onMode='*', onTurma='*', lastFetch=0, fetching=false, flushing=false;
+function loadPend(){ try{ const v=localStorage.getItem(PEND_KEY); if(v!==null) return JSON.parse(v)||[]; }catch(e){} return memPend; }
+function savePend(a){ memPend=a; try{ localStorage.setItem(PEND_KEY,JSON.stringify(a)); }catch(e){} }
+function saveMe(){ const o={nome:$('inNome').value.trim(),equipe:$('inEquipe').value.trim(),turma:$('selTurma').value}; memMe=o; try{ localStorage.setItem(ME_KEY,JSON.stringify(o)); }catch(e){} }
+function loadMe(){ try{ const v=localStorage.getItem(ME_KEY); if(v!==null) return JSON.parse(v)||{}; }catch(e){} return memMe||{}; }
+const pkey=r=>(String(r.nome).trim()+'|'+String(r.equipe||'').trim()+'|'+String(r.turma||'').trim()).toLowerCase();
+const rankSort=(a,b)=>b.pontos-a.pontos||b.acertos-a.acertos;
+function bestPer(items){
+  const m=new Map();
+  items.forEach(r=>{ const k=pkey(r)+'|'+r.modo, c=m.get(k); if(!c||r.pontos>c.pontos||(r.pontos===c.pontos&&r.acertos>c.acertos)) m.set(k,r); });
+  return [...m.values()];
+}
+async function api(path,opts){
+  const ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+  const to=setTimeout(()=>{ if(ctl) ctl.abort(); },15000);
+  try{
+    const r=await fetch(API_URL+path,Object.assign({redirect:'follow'},ctl?{signal:ctl.signal}:{},opts||{}));
+    return await r.json();
+  } finally { clearTimeout(to); }
+}
+async function fetchRanking(force){
+  if(!ONLINE||fetching) return;
+  if(!force && onData && Date.now()-lastFetch<15000){ if(!$('start').hidden) renderOnlineIfShown(); return; }
+  fetching=true; renderOnlineIfShown();
+  try{
+    const j=await api((API_URL.indexOf('?')>=0?'&':'?')+'acao=ranking&_='+Date.now());
+    if(!j||!j.ok||!Array.isArray(j.itens)) throw new Error('resposta');
+    onData=j.itens.map(r=>({turma:String(r.turma||''),nome:String(r.nome||''),equipe:String(r.equipe||''),modo:String(r.modo||''),pontos:Number(r.pontos)||0,acertos:Number(r.acertos)||0}));
+    onErr=false; lastFetch=Date.now();
+  }catch(e){ onErr=true; }
+  fetching=false; renderOnlineIfShown();
+}
+function renderOnlineIfShown(){ if(ONLINE&&rkView==='on'&&!$('onView').hidden) renderOnline(); }
+async function flushPending(){
+  if(!ONLINE||flushing) return;
+  flushing=true;
+  try{
+    const lote=loadPend(), ficam=[];
+    for(const e of lote){
+      try{
+        const j=await api('',{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({acao:'enviar',id:e.id,turma:e.turma,nome:e.nome,equipe:e.equipe,modo:e.mode,pontos:e.pontos,acertos:e.acertos,tempo:e.tempo,respostas:e.resp})});
+        if(j&&(j.ok||j.permanente)) continue;   // enviado (ou recusado de vez): sai da fila
+        ficam.push(e);
+      }catch(err){ ficam.push(e); }
+    }
+    const ids=new Set(lote.map(e=>e.id));
+    savePend(ficam.concat(loadPend().filter(e=>!ids.has(e.id))));
+  } finally { flushing=false; }
+}
+async function endOnline(entry){
+  if(!ONLINE) return;
+  const pend=loadPend(); if(!pend.some(e=>e.id===entry.id)){ pend.push(entry); savePend(pend); }
+  $('sendStatus').textContent='Enviando seu resultado para o ranking online…';
+  await flushPending();
+  const enviado=!loadPend().some(e=>e.id===entry.id);
+  $('sendStatus').textContent=enviado?'Resultado enviado para o ranking online!':'Sem conexão: seu resultado ficou guardado neste aparelho e será enviado quando você abrir o jogo com internet.';
+  await fetchRanking(true);
+  renderEndOnline(entry);
+}
+// cor do nome conforme a posição (estilo "raridade" de jogo):
+// 1º lendário (ouro cintilante com coroa) · 2º prata · 3º bronze · 4º–5º épico (roxo) · 6º–10º raro (azul)
+// a turma "Professor" ganha o arco-íris
+const CROWN='<svg class="crown" viewBox="0 0 24 16" aria-hidden="true"><path d="M2 14 L4 4 L9 9 L12 2 L15 9 L20 4 L22 14 Z" fill="#ffd34d" stroke="#a8740a" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+const isProf=t=>String(t||'').trim().toLowerCase()==='professor';
+function nameHTML(nome,pos,turma){
+  if(isProf(turma)) return '<span class="nm nmp">'+esc(nome)+'</span>';
+  if(pos===0) return CROWN+'<span class="nm nm1">'+esc(nome)+'</span>';
+  const cls=pos===1?'nm nm2':(pos===2?'nm nm3':(pos<=4?'nm4':(pos<=9?'nm5':'')));
+  return cls?'<span class="'+cls+'">'+esc(nome)+'</span>':esc(nome);
+}
+function listHTML(list,meKey){
+  if(!list.length) return '<div class="empty">Ninguém no ranking ainda. Seja o primeiro!</div>';
+  let pos=0; // o professor não ocupa o pódio dos alunos
+  return '<ol class="rank">'+list.slice(0,10).map(r=>
+    '<li class="'+(meKey&&pkey(r)===meKey?'me':'')+'"><span>'+nameHTML(r.nome,isProf(r.turma)?-1:pos++,r.turma)+(r.equipe?' <small style="color:#9fb3d9">('+esc(r.equipe)+')</small>':'')+'<span class="tg">'+esc(r.turma)+'</span></span><span class="pts">'+r.pontos+' pts · '+r.acertos+'/'+TOTAL+' acertos'+'</span></li>').join('')+'</ol>';
+}
+function renderEndOnline(entry){
+  if(!ONLINE||$('end').hidden) return;
+  if(!onData){ $('ePos').textContent='Não consegui carregar o ranking online agora.'; renderRank($('rankEnd'),entry.id); return; }
+  const item={turma:entry.turma,nome:entry.nome,equipe:entry.equipe,modo:entry.mode,pontos:entry.pontos,acertos:entry.acertos};
+  const all=bestPer(onData.concat([item])).filter(r=>r.modo===entry.mode).sort(rankSort);
+  const me=pkey(entry), pos=all.findIndex(r=>pkey(r)===me)+1;
+  const da=all.filter(r=>r.turma===entry.turma), posT=da.findIndex(r=>pkey(r)===me)+1;
+  $('ePos').textContent=entry.turma+': '+posT+'º lugar · Geral: '+pos+'º lugar de '+all.length+' aluno'+(all.length===1?'':'s')+'.';
+  $('podium').innerHTML=podiumHTML(all);
+  $('rankEnd').innerHTML=listHTML(all,me);
+}
+function renderOnline(){
+  const turmas=TURMAS.slice(); (onData||[]).forEach(r=>{ if(r.turma&&!turmas.includes(r.turma)) turmas.push(r.turma); });
+  const chip=(k,t,on,attr)=>'<button type="button" '+attr+'="'+esc(k)+'" class="'+(on?'on':'')+'">'+esc(t)+'</button>';
+  $('onMode').innerHTML=[['*','Todos os modos'],['normal','Missão Completa'],['inf','Missão Final']].map(x=>{ const h=chip(x[0],x[1],x[0]===onMode,'data-m'); return x[0]==='*'?h.replace('<button ','<button data-all="1" '):h; }).join('');
+  $('onTurma').innerHTML=chip('*','Todas as turmas',onTurma==='*','data-t')+turmas.map(t=>chip(t,t,t===onTurma,'data-t')).join('');
+  [...$('onMode').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{ onMode=b.dataset.m; renderOnline(); }));
+  [...$('onTurma').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{ onTurma=b.dataset.t; renderOnline(); }));
+  const me=pkey({nome:$('inNome').value,equipe:$('inEquipe').value,turma:$('selTurma').value});
+  const base=bestPer(onData||[]).filter(r=>onMode==='*'||r.modo===onMode);
+  const lista=base.filter(r=>onTurma==='*'||r.turma===onTurma).sort(rankSort);
+  $('onList').innerHTML=onData?listHTML(lista,me):'<div class="empty">'+(fetching?'Carregando o ranking…':'Não foi possível carregar o ranking online agora.')+'</div>';
+  let st_=''; 
+  if(fetching) st_='Atualizando…';
+  else if(onErr) st_=onData?'Sem conexão: mostrando dados antigos.':'Sem conexão com o ranking.';
+  else if(lastFetch) { const d=new Date(lastFetch); st_='Atualizado às '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'.'; }
+  const pend=loadPend().length;
+  $('onStatus').innerHTML=esc(st_)+(pend?' · '+pend+' resultado(s) aguardando envio.':'')+' <button class="ghostbtn" id="btnRef" type="button" style="padding:3px 10px;margin-left:6px">Atualizar</button>';
+  $('btnRef').addEventListener('click',()=>{ flushPending().then(()=>fetchRanking(true)); fetchRanking(true); });
+  // placar das turmas (online)
+  const grupos={}; base.forEach(r=>{ (grupos[r.turma]||(grupos[r.turma]=[])).push(r.pontos); });
+  const rows=Object.keys(grupos).map(t=>{ const v=grupos[t]; return {n:t,duplas:v.length,melhor:Math.max.apply(null,v),media:Math.round(v.reduce((a,b)=>a+b,0)/v.length)}; }).sort((a,b)=>b.media-a.media);
+  $('cmpPanel').hidden=(rows.length<2);
+  $('cmpBody').innerHTML=rows.map((r,i)=>'<tr class="'+(i===0?'lead':'')+'"><td>'+(i+1)+'º · '+esc(r.n)+'</td><td>'+r.duplas+'</td><td>'+r.melhor+'</td><td>'+r.media+'</td></tr>').join('');
+}
+
+function renderRank(el,meId,lista){
+  const list=(lista||loadRank()).slice(0,10);
+  if(!list.length){ el.innerHTML='<div class="empty">'+(lista?'Este placar está vazio.':'Ninguém jogou ainda neste computador.')+'</div>'; return; }
+  let pos=0;
+  el.innerHTML='<ol class="rank">'+list.map(r=>
+    '<li class="'+(r.id===meId?'me':'')+'"><span>'+nameHTML(r.nome,isProf(r.turma)?-1:pos++,r.turma)+(r.equipe?' <small style="color:#9fb3d9">('+esc(r.equipe)+')</small>':'')+'</span><span class="pts">'+r.pontos+' pts · '+r.acertos+'/'+TOTAL+' acertos'+'</span></li>'
+  ).join('')+'</ol>';
+}
+
+
+/* =====================================================================
+   INICIALIZAÇÃO
+   ===================================================================== */
+$('regras').innerHTML=[
+  '<b>'+TOTAL+' questões</b> de múltipla escolha (capítulos 10 a 13).',
+  'Cada questão tem <b>'+TEMPO_POR_QUESTAO+' segundos</b>. Se o tempo acabar, ela fica sem resposta.',
+  'Acertar dá de <b>500 a 1000 pontos</b>: quanto mais rápido, mais pontos.',
+  MOSTRAR_ACERTO?'Depois de cada resposta você vê se acertou.':'É uma <b>prova</b>: você só vê o resultado no final.',
+  'Tenha lápis e papel para as contas. Não dá para voltar a uma questão.'+(UMA_TENTATIVA?' Cada aluno faz a prova <b>uma vez</b>.':'')
+].map(t=>'<li>'+t+'</li>').join('');
+const T0=$('selTurma'); TURMAS.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; T0.appendChild(o); });
+if(ONLINE){
+  const eu=loadMe(); if(eu.nome) $('inNome').value=eu.nome; if(eu.turma&&TURMAS.includes(eu.turma)) T0.value=eu.turma;
+  $('nomeHint').hidden=false;
+  $('inNome').addEventListener('input',renderOnlineIfShown); T0.addEventListener('change',()=>{ renderOnlineIfShown(); });
+  window.addEventListener('online',()=>{ flushPending().then(()=>fetchRanking(true)); });
+  setInterval(()=>{ if(!$('start').hidden&&!document.hidden) fetchRanking(false); },60000);
+  flushPending().then(()=>fetchRanking(true));
+}
+// prova interrompida (página fechada): avisa que dá para continuar
+(function(){ const p=loadJ(PROG_KEY,null); if(p&&p.i<TOTAL){ $('inNome').value=p.nome; T0.value=p.turma; $('startMsg').textContent='Você tem uma prova em andamento (questão '+(p.i+1)+' de '+TOTAL+'). Clique em Começar para continuar.'; $('btnStart').textContent='Continuar'; } })();
+renderBoards();
+$('btnStart').addEventListener('click',startGame);
+$('inNome').addEventListener('keydown',e=>{ if(e.key==='Enter') T0.focus(); });
+$('btnNext').addEventListener('click',next);
+$('btnHome').addEventListener('click',home);
+document.addEventListener('keydown',e=>{
+  if(!$('ov').hidden&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); next(); return; }
+  if(st&&!st.locked&&!$('game').hidden&&['1','2','3','4'].includes(e.key)){ const b=$('tiles').children[+e.key-1]; if(b) b.click(); }
+});
+$('btnExp').addEventListener('click',doExport);
+$('btnImp').addEventListener('click',()=>$('fileImp').click());
+$('fileImp').addEventListener('change',()=>{ const f=[...$('fileImp').files]; $('fileImp').value=''; if(f.length) doImport(f); });
+$('btnDelBoard').addEventListener('click',()=>{ if(boardSel==='local') return; if(confirm('Remover o placar importado "'+boardSel+'" deste computador?')){ const imp=loadImp(); delete imp[boardSel]; saveImp(imp); boardSel='local'; renderBoards(); } });
+$('btnClear').addEventListener('click',()=>{ if(confirm('Apagar o ranking deste computador? (Os placares importados continuam.)')){ saveRank([]); renderBoards(); } });
+$('inTurma').addEventListener('input',()=>{ saveLbl($('inTurma').value); renderBoards(); });
+function paintMusic(){ $('musicBtn').textContent='Música: '+(musicOn?'ligada':'desligada'); }
+paintMusic();
+$('musicBtn').addEventListener('click',()=>{ musicOn=!musicOn; paintMusic(); if(!musicOn) musicStop(); else if(!$('game').hidden) musicStart(); });
+$('muteBtn').addEventListener('click',()=>{ muted=!muted; $('muteBtn').textContent='Som: '+(muted?'desligado':'ligado'); });
+})();
+</script>
+</body>
+</html>
